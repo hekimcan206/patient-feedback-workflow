@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Pure domain: scoring, case policy, webhook verification, tokens, envelope encryption, dispatch decisions.
+       No I/O and no package references, so every business rule is unit-testable without a database. -->
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PatientFeedback.UnitTests" />
+  </ItemGroup>
+
+</Project>
