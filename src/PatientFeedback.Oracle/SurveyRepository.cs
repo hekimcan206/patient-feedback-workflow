@@ -26,7 +26,7 @@ public enum SubmitStatus
 /// <summary>A case that was just opened, with what the live panel needs (no personal data).</summary>
 public sealed record OpenedCase(long CaseId, long SurveyId, string Department, CaseSeverity Severity, string Reasons, DateTimeOffset OpenedAt, DateTimeOffset SlaDueAt);
 
-public sealed record SubmitResult(SubmitStatus Status, long? SurveyId = null, OpenedCase? Case = null);
+public sealed record SubmitResult(SubmitStatus Status, long? SurveyId = null, OpenedCase? Case = null, string? Department = null);
 
 public sealed class SurveyRepository(OracleDb db, PiiProtector protector)
 {
@@ -106,7 +106,7 @@ public sealed class SurveyRepository(OracleDb db, PiiProtector protector)
         }
 
         await tx.CommitAsync(ct);
-        return new SubmitResult(SubmitStatus.Accepted, target.SurveyId, opened);
+        return new SubmitResult(SubmitStatus.Accepted, target.SurveyId, opened, target.Department);
     }
 
     /// <summary>"Do not send me surveys": opts the contact out of every channel and retires the link.</summary>

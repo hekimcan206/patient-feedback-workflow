@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PatientFeedback.Web": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:18440",
+      "environmentVariables": { "ASPNETCORE_ENVIRONMENT": "Development" }
+    }
+  }
+}

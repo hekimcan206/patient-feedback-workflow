@@ -1,0 +1,6 @@
+Vendored browser libraries (served locally so the panel works on a hospital intranet without CDN access).
+All three are MIT licensed; see the upstream repositories for the full licence text.
+
+  @microsoft/signalr 10.0.0   https://github.com/dotnet/aspnetcore            MIT
+  tabulator-tables  6.3.1     https://github.com/olifolkerd/tabulator         MIT
+  chart.js          4.4.9     https://github.com/chartjs/Chart.js             MIT

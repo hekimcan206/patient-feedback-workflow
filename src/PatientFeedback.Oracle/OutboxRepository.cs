@@ -94,6 +94,14 @@ public sealed class OutboxRepository(OracleDb db)
         return (claimToken, [.. rows]);
     }
 
+    /// <summary>One PII_READ row per contact whose phone the dispatcher is about to decrypt.</summary>
+    public async Task AuditDispatchReadsAsync(IReadOnlyCollection<string> contactIds, string actor, CancellationToken ct = default)
+    {
+        await using var connection = await db.OpenAsync(ct);
+        await AuditRepository.WriteAsync(connection, null,
+            [.. contactIds.Select(id => new AuditEntry(actor, AuditActions.PiiRead, "contact", id, "phone", "survey-dispatch"))]);
+    }
+
     public async Task MarkSentAsync(ClaimedMessage m, Guid claimToken, string providerMessageId, DateTimeOffset now, CancellationToken ct = default)
     {
         await using var connection = await db.OpenAsync(ct);

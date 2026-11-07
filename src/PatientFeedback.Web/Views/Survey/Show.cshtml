@@ -1,0 +1,60 @@
+@model SurveyViewModel
+@{
+    Layout = "_SurveyLayout";
+    var csatLabels = new[] { "Hiç memnun değilim", "Memnun değilim", "Kararsızım", "Memnunum", "Çok memnunum" };
+}
+<h1>Ziyaretinizi değerlendirin</h1>
+<p class="lead">@Model.Department bölümüne yaptığınız ziyaret hakkında üç kısa soru. Yaklaşık bir dakika sürer.</p>
+
+<form method="post" action="/s/@Model.Token" class="survey-form">
+    @Html.AntiForgeryToken()
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <p class="errors">Lütfen ilk soruya 0–10 arasında bir puan verin.</p>
+    }
+
+    <fieldset>
+        <legend>1. Bu hastaneyi bir yakınınıza tavsiye etme olasılığınız nedir?</legend>
+        <div class="scale scale-11">
+            @for (var i = 0; i <= 10; i++)
+            {
+                <label><input type="radio" name="Nps" value="@i" checked="@(Model.Form.Nps == i)" required /><span>@i</span></label>
+            }
+        </div>
+        <div class="ends"><span>Hiç olası değil</span><span>Kesinlikle</span></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>2. Ziyaretinizden genel olarak ne kadar memnun kaldınız?</legend>
+        <div class="scale scale-5">
+            @for (var i = 1; i <= 5; i++)
+            {
+                <label title="@csatLabels[i - 1]"><input type="radio" name="Csat" value="@i" checked="@(Model.Form.Csat == i)" /><span>@i</span></label>
+            }
+        </div>
+        <div class="ends"><span>Hiç memnun değilim</span><span>Çok memnunum</span></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>3. «Hastane, ihtiyacım olan hizmeti almamı kolaylaştırdı.»</legend>
+        <div class="scale scale-7">
+            @for (var i = 1; i <= 7; i++)
+            {
+                <label><input type="radio" name="Ces" value="@i" checked="@(Model.Form.Ces == i)" /><span>@i</span></label>
+            }
+        </div>
+        <div class="ends"><span>Kesinlikle katılmıyorum</span><span>Kesinlikle katılıyorum</span></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Eklemek istedikleriniz (isteğe bağlı)</legend>
+        <textarea name="Comment" maxlength="400" rows="4" placeholder="Lütfen kimlik numarası veya sağlık bilgisi yazmayın.">@Model.Form.Comment</textarea>
+    </fieldset>
+
+    <button type="submit" class="primary">Gönder</button>
+</form>
+
+<form method="post" action="/s/@Model.Token/opt-out" class="optout">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="link">Bu tür mesajları artık almak istemiyorum</button>
+</form>

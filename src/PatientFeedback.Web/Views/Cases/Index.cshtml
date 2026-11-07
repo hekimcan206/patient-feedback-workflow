@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Cases";
+    var canReveal = User.IsInRole(Roles.CaseManager);
+}
+@Html.AntiForgeryToken()
+<div class="panel-head">
+    <h1>Service-recovery cases</h1>
+    <span id="live" class="live off" title="SignalR connection">offline</span>
+</div>
+
+<section class="kpis">
+    <div class="kpi"><span class="label">NPS · 30 days</span><span class="value" id="kpi-nps">–</span><span class="sub" id="kpi-nps-n"></span></div>
+    <div class="kpi"><span class="label">CSAT (top-2-box)</span><span class="value" id="kpi-csat">–</span><span class="sub" id="kpi-csat-n"></span></div>
+    <div class="kpi"><span class="label">CES (mean, 1–7)</span><span class="value" id="kpi-ces">–</span><span class="sub" id="kpi-ces-n"></span></div>
+    <div class="kpi"><span class="label">Open cases</span><span class="value" id="kpi-open">–</span><span class="sub" id="kpi-progress"></span></div>
+    <div class="kpi warn"><span class="label">SLA breached</span><span class="value" id="kpi-breached">–</span><span class="sub" id="kpi-resolved"></span></div>
+</section>
+
+<div class="grid-2">
+    <section class="card">
+        <div class="card-head">
+            <h2>Cases</h2>
+            <label class="muted"><input type="checkbox" id="show-resolved" /> show resolved</label>
+        </div>
+        <div id="case-grid"></div>
+    </section>
+    <section class="card">
+        <h2>NPS by department · 30 days</h2>
+        <div class="chart-box"><canvas id="nps-chart" aria-label="NPS by department"></canvas></div>
+    </section>
+</div>
+
+<dialog id="case-dialog" data-can-reveal="@(canReveal ? "true" : "false")">
+    <form method="dialog" class="dialog-close"><button class="link" aria-label="Close">✕</button></form>
+    <div id="case-detail"></div>
+</dialog>
+
+@section Scripts {
+    <script src="~/lib/signalr/signalr.min.js" asp-append-version="true"></script>
+    <script src="~/lib/tabulator/tabulator.min.js" asp-append-version="true"></script>
+    <script src="~/lib/chartjs/chart.umd.min.js" asp-append-version="true"></script>
+    <script src="~/js/cases.js" asp-append-version="true"></script>
+}

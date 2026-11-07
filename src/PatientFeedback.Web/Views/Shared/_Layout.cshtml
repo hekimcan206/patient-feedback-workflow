@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "Patient feedback") · Patient feedback</title>
+    <link rel="stylesheet" href="~/lib/tabulator/tabulator.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/cases">Patient feedback</a>
+    <nav>
+        @if (User.IsInRole(Roles.Agent) || User.IsInRole(Roles.CaseManager))
+        {
+            <a href="/cases">Cases</a>
+        }
+        @if (User.IsInRole(Roles.PrivacyOfficer))
+        {
+            <a href="/audit">Access log</a>
+        }
+    </nav>
+    <div class="who">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <span>@(User.FindFirst("display_name")?.Value ?? User.Identity.Name)</span>
+            <form method="post" action="/account/logout">@Html.AntiForgeryToken()<button class="link" type="submit">Sign out</button></form>
+        }
+    </div>
+</header>
+<main class="page">
+    @RenderBody()
+</main>
+<footer class="foot">Synthetic data only · no real patients · demo build</footer>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- The chiseled runtime image ships without ICU; invariant mode keeps behaviour identical locally and in the container. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- CA1515 (make exe types internal) does not fit MVC: controllers and view models must be public to be discovered. -->
+    <NoWarn>$(NoWarn);CA1515</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PatientFeedback.Core\PatientFeedback.Core.csproj" />
+    <ProjectReference Include="..\PatientFeedback.Oracle\PatientFeedback.Oracle.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PatientFeedback.UnitTests" />
+    <InternalsVisibleTo Include="PatientFeedback.OracleTests" />
+  </ItemGroup>
+
+</Project>

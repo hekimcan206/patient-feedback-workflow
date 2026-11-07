@@ -2,7 +2,9 @@
   <Folder Name="/src/">
     <Project Path="src/PatientFeedback.Core/PatientFeedback.Core.csproj" />
     <Project Path="src/PatientFeedback.Oracle/PatientFeedback.Oracle.csproj" />
+    <Project Path="src/PatientFeedback.Simulator/PatientFeedback.Simulator.csproj" />
     <Project Path="src/PatientFeedback.Synthetic/PatientFeedback.Synthetic.csproj" />
+    <Project Path="src/PatientFeedback.Web/PatientFeedback.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PatientFeedback.OracleTests/PatientFeedback.OracleTests.csproj" />

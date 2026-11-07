@@ -1,0 +1,13 @@
+@model bool
+@{
+    Layout = "_SurveyLayout";
+}
+<h1>Teşekkür ederiz</h1>
+@if (Model)
+{
+    <p class="lead">Yaşadığınız sorun için üzgünüz. Hasta ilişkileri ekibimiz kaydınızı inceleyecek ve gerekirse sizinle iletişime geçecek.</p>
+}
+else
+{
+    <p class="lead">Geri bildiriminiz kaydedildi. Hizmetlerimizi geliştirmemize yardımcı olduğunuz için teşekkürler.</p>
+}

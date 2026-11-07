@@ -1,0 +1,22 @@
+@model IReadOnlyList<DemoUser>
+@{
+    ViewData["Title"] = "Sign in";
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+}
+<section class="card narrow">
+    <h1>Demo sign-in</h1>
+    <p class="muted">Stands in for the hospital's identity provider. Choose a role to see what it may do.</p>
+    @foreach (var user in Model)
+    {
+        <form method="post" action="/account/login" class="login-row">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="userName" value="@user.UserName" />
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+            <div>
+                <strong>@user.DisplayName</strong>
+                <div class="muted">@user.Description</div>
+            </div>
+            <button type="submit" class="primary" data-user="@user.UserName">Sign in</button>
+        </form>
+    }
+</section>

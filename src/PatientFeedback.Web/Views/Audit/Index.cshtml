@@ -1,0 +1,39 @@
+@model AuditPage
+@{
+    ViewData["Title"] = "Access log";
+}
+<h1>Personal-data access log</h1>
+<p class="muted">Every read, write, reveal and anonymisation of personal data, newest first. Append-only: the application account cannot change or delete rows.</p>
+
+<section class="card">
+    <h2>Retention runs (DBMS_SCHEDULER job PF_RETENTION_NIGHTLY)</h2>
+    <table class="plain">
+        <thead><tr><th>Run</th><th>Started (UTC)</th><th>By</th><th>Status</th><th>Links expired</th><th>Free text erased</th><th>Contacts anonymised</th><th>Held (open case)</th><th>Audit rows deleted</th></tr></thead>
+        <tbody>
+        @foreach (var r in Model.RetentionRuns)
+        {
+            <tr><td>@r.RunId</td><td>@r.StartedAt.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture)</td><td>@r.TriggeredBy</td><td>@r.Status</td><td>@r.TokensExpired</td><td>@(r.CommentsErased + r.NotesErased)</td><td>@r.ContactsAnonymised</td><td>@r.HeldOpenCase</td><td>@r.AuditDeleted</td></tr>
+        }
+        @if (Model.RetentionRuns.Count == 0)
+        {
+            <tr><td colspan="9" class="muted">No run yet: the nightly job runs at 02:30.</td></tr>
+        }
+        </tbody>
+    </table>
+</section>
+
+<section class="card">
+    <table class="plain">
+        <thead><tr><th>#</th><th>At (UTC)</th><th>Actor</th><th>Action</th><th>Record</th><th>Fields</th><th>Purpose</th><th>DB user</th><th>Trace</th></tr></thead>
+        <tbody>
+        @foreach (var a in Model.Entries)
+        {
+            <tr>
+                <td>@a.AuditId</td><td>@a.At.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</td><td>@a.Actor</td><td><span class="tag">@a.Action</span></td>
+                <td>@a.Entity/@(a.EntityId.Length > 8 ? a.EntityId[..8] + "…" : a.EntityId)</td><td>@a.Fields</td><td>@a.Purpose</td><td>@a.DbUser</td>
+                <td class="mono">@(a.TraceId is { Length: > 8 } t ? t[..8] : "")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</section>

@@ -1,0 +1,26 @@
+/* Mobile-first survey page: large tap targets, no JavaScript needed. */
+:root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1d2733; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f6f8; }
+.survey { max-width: 560px; margin: 0 auto; padding: 1.25rem 1rem; background: #fff; min-height: 80vh; }
+h1 { font-size: 1.35rem; margin: .25rem 0 .5rem; }
+.lead { color: #4b5866; }
+fieldset { border: 0; margin: 1.25rem 0; padding: 0; }
+legend { font-weight: 600; margin-bottom: .6rem; }
+.scale { display: grid; gap: .3rem; }
+.scale-11 { grid-template-columns: repeat(11, 1fr); }
+.scale-5 { grid-template-columns: repeat(5, 1fr); }
+.scale-7 { grid-template-columns: repeat(7, 1fr); }
+.scale label { position: relative; }
+.scale input { position: absolute; opacity: 0; inset: 0; }
+.scale span { display: block; text-align: center; padding: .65rem 0; border: 1px solid #c9d2db; border-radius: 6px; font-weight: 600; }
+.scale input:checked + span { background: #1f6f8b; color: #fff; border-color: #1f6f8b; }
+.scale input:focus-visible + span { outline: 2px solid #1f6f8b; outline-offset: 2px; }
+.ends { display: flex; justify-content: space-between; color: #6b7785; font-size: .75rem; margin-top: .25rem; }
+textarea { width: 100%; font: inherit; padding: .6rem; border: 1px solid #c9d2db; border-radius: 6px; }
+.primary { width: 100%; padding: .9rem; font-size: 1.05rem; border: 0; border-radius: 8px; background: #1f6f8b; color: #fff; font-weight: 600; }
+.optout { margin-top: 1.5rem; text-align: center; }
+.link { background: none; border: 0; color: #6b7785; text-decoration: underline; font: inherit; font-size: .85rem; }
+.errors { color: #a12a1f; }
+.privacy { max-width: 560px; margin: 0 auto; padding: .75rem 1rem 2rem; color: #6b7785; font-size: .75rem; }
+@media (max-width: 380px) { .scale-11 { grid-template-columns: repeat(6, 1fr); } }
