@@ -51,7 +51,7 @@ public sealed class VisitGenerator
     public SurveyAnswers Answers(string department)
     {
         var shift = department == WeakDepartment ? -2.5 : 0;
-        var mood = Math.Clamp(_faker.Random.Double() * _faker.Random.Double() * -10 + 10 + shift, 0, 10); // skewed to 10
+        var mood = Math.Clamp(10 - (10 * _faker.Random.Double() * _faker.Random.Double() * _faker.Random.Double()) + shift, 0, 10); // skewed to 10
         var nps = (int)Math.Round(mood);
         var csat = Math.Clamp((int)Math.Round(1 + (mood / 10 * 4) + _faker.Random.Double(-0.7, 0.7)), 1, 5);
         var ces = Math.Clamp((int)Math.Round(1 + (mood / 10 * 6) + _faker.Random.Double(-1, 1)), 1, 7);

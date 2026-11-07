@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PatientFeedback.Core\PatientFeedback.Core.csproj" />
+    <ProjectReference Include="..\PatientFeedback.Synthetic\PatientFeedback.Synthetic.csproj" />
+  </ItemGroup>
+
+</Project>

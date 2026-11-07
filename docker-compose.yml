@@ -1,0 +1,89 @@
+# `docker compose up` runs the whole demo with zero manual steps:
+#   oracle     → Oracle Database 23ai Free; deploy/oracle/init creates PF_OWNER and PF_APP
+#   installer  → same image as the app, `--init-oracle`: schema, PL/SQL packages, grants, DBMS_SCHEDULER job; exits
+#   web        → ASP.NET Core MVC app (webhook, dispatcher, survey pages, case panel), connected as PF_APP
+#   simulator  → synthetic hospital: signed visit webhooks + simulated patients answering surveys
+# Then: http://localhost:18440  (demo sign-in; all data synthetic)
+# The default keys below are development-only values generated for this repository; override them via .env.
+name: patient-feedback
+
+x-app-image: &app-image
+  image: patient-feedback-web:local
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: web
+
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-sys-dev-only}
+      OWNER_PASSWORD: ${OWNER_PASSWORD:-OwnerDev1}
+      APP_PASSWORD: ${APP_PASSWORD:-AppDev1}
+    ports:
+      # Loopback only, for SQL Developer / sqlplus during development.
+      - "127.0.0.1:${ORACLE_PORT:-15240}:1521"
+    volumes:
+      - ./deploy/oracle/init:/container-entrypoint-initdb.d:ro
+      - oradata:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 10s
+
+  installer:
+    <<: *app-image
+    command: ["--init-oracle"]
+    environment:
+      ConnectionStrings__OracleOwner: Data Source=oracle:1521/FREEPDB1;User Id=pf_owner;Password=${OWNER_PASSWORD:-OwnerDev1}
+    depends_on:
+      oracle:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    <<: *app-image
+    ports:
+      - "127.0.0.1:${WEB_PORT:-18440}:8080"
+    environment:
+      ConnectionStrings__OracleApp: Data Source=oracle:1521/FREEPDB1;User Id=pf_app;Password=${APP_PASSWORD:-AppDev1}
+      Webhooks__ClinicalEventSecrets__0: ${WEBHOOK_SECRET:-whsec_u0WFOg11AO0NWvzlHaZaavSRP4z1USar7Ah97qSucBc=}
+      Webhooks__ProviderSecrets__0: ${PROVIDER_WEBHOOK_SECRET:-whsec_LVOU/nei2lYCtETPu7kIRLqhuqN8xi3wTsU6r+2evhk=}
+      Pii__Keks__0__Id: ${KEK_ID:-dev-kek-2026-11}
+      Pii__Keks__0__Key: ${KEK_BASE64:-lds4eT2koZnoU/sxvOYbNP0eV/1xvk1TcuuEWzwDLpQ=}
+      Pii__ActiveKekId: ${KEK_ID:-dev-kek-2026-11}
+      Pii__BlindIndexKey: ${BLIND_INDEX_KEY_BASE64:-KOZHElGZjGgcSIYU7TOJGejcQULuzOYu0idukM2Lni4=}
+      Survey__PublicBaseUrl: http://localhost:${WEB_PORT:-18440}
+      # Demo pacing: send immediately and ignore quiet hours so the panel fills while you watch.
+      Dispatch__SendDelay: "00:00:00"
+      Dispatch__QuietHoursEnabled: "false"
+      Simulation__Enabled: "true"
+      DemoAuth__Enabled: "true"
+      OTEL_SERVICE_NAME: patient-feedback-web
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    depends_on:
+      installer:
+        condition: service_completed_successfully
+    # No container HEALTHCHECK: the chiseled image has no shell or curl; probe /health/live and /health/ready.
+    restart: unless-stopped
+
+  simulator:
+    image: patient-feedback-simulator:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: simulator
+    environment:
+      TARGET_URL: http://web:8080
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-whsec_u0WFOg11AO0NWvzlHaZaavSRP4z1USar7Ah97qSucBc=}
+      VISITS_PER_MINUTE: ${VISITS_PER_MINUTE:-30}
+      ANSWER_RATE: "0.7"
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  oradata:
