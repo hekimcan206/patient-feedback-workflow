@@ -126,7 +126,12 @@ public sealed class FakeProviderTests
 
     private static IOptions<FakeProviderOptions> NoRandomFailures() => Microsoft.Extensions.Options.Options.Create(new FakeProviderOptions
     {
-        WhatsAppRateLimitRate = 0, WhatsAppTimeoutRate = 0, SmsServerErrorRate = 0, MinLatencyMs = 0, MaxLatencyMs = 0, Seed = 1,
+        WhatsAppRateLimitRate = 0,
+        WhatsAppTimeoutRate = 0,
+        SmsServerErrorRate = 0,
+        MinLatencyMs = 0,
+        MaxLatencyMs = 0,
+        Seed = 1,
     });
 
     [Theory]
