@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/PatientFeedback.LoadTest/PatientFeedback.LoadTest.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/PatientFeedback.Core/PatientFeedback.Core.csproj" />
     <Project Path="src/PatientFeedback.Oracle/PatientFeedback.Oracle.csproj" />

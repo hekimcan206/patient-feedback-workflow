@@ -60,6 +60,11 @@ services:
       # Demo pacing: send immediately and ignore quiet hours so the panel fills while you watch.
       Dispatch__SendDelay: "00:00:00"
       Dispatch__QuietHoursEnabled: "false"
+      # Fake provider failure injection (per attempt) and the public survey rate limit; the load test overrides them.
+      FakeProviders__WhatsAppRateLimitRate: ${WA_RATE_LIMIT_RATE:-0.03}
+      FakeProviders__WhatsAppTimeoutRate: ${WA_TIMEOUT_RATE:-0.01}
+      FakeProviders__SmsServerErrorRate: ${SMS_ERROR_RATE:-0.02}
+      RateLimits__SurveyPerMinute: ${SURVEY_RATE_LIMIT_PER_MINUTE:-60}
       Simulation__Enabled: "true"
       DemoAuth__Enabled: "true"
       OTEL_SERVICE_NAME: patient-feedback-web
