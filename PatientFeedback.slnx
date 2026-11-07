@@ -8,5 +8,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PatientFeedback.OracleTests/PatientFeedback.OracleTests.csproj" />
+    <Project Path="tests/PatientFeedback.UnitTests/PatientFeedback.UnitTests.csproj" />
   </Folder>
 </Solution>
