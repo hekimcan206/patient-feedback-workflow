@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\PatientFeedback.Core\PatientFeedback.Core.csproj" />
     <ProjectReference Include="..\..\src\PatientFeedback.Oracle\PatientFeedback.Oracle.csproj" />
     <ProjectReference Include="..\..\src\PatientFeedback.Synthetic\PatientFeedback.Synthetic.csproj" />
+    <ProjectReference Include="..\..\src\PatientFeedback.Web\PatientFeedback.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
