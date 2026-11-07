@@ -42,9 +42,10 @@ public sealed class DispatcherOptions
 {
     public bool Enabled { get; set; } = true;
 
-    public int BatchSize { get; set; } = 32;
+    public int BatchSize { get; set; } = 64;
 
-    public int Concurrency { get; set; } = 8;
+    /// <summary>Sends in flight per instance. Provider latency dominates, so this is the throughput lever (docs/benchmarks.md).</summary>
+    public int Concurrency { get; set; } = 32;
 
     public TimeSpan PollInterval { get; set; } = TimeSpan.FromSeconds(1);
 

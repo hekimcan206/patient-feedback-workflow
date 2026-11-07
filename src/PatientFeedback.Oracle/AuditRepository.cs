@@ -1,6 +1,7 @@
 using System.Data;
 using System.Diagnostics;
 using Dapper;
+using Oracle.ManagedDataAccess.Client;
 
 namespace PatientFeedback.Oracle;
 
@@ -52,11 +53,31 @@ public sealed class AuditRepository(OracleDb db)
     public static Task WriteAsync(IDbConnection connection, IDbTransaction? transaction, AuditEntry entry) =>
         WriteAsync(connection, transaction, [entry]);
 
-    public static Task WriteAsync(IDbConnection connection, IDbTransaction? transaction, IReadOnlyCollection<AuditEntry> entries)
+    public static async Task WriteAsync(IDbConnection connection, IDbTransaction? transaction, IReadOnlyCollection<AuditEntry> entries)
     {
+        ArgumentNullException.ThrowIfNull(entries);
         var traceId = Activity.Current?.TraceId.ToString();
-        // Dapper executes the statement once per element (array of parameter objects).
-        return connection.ExecuteAsync(InsertSql, entries.Select(e => new
+        if (entries.Count > 1 && connection is OracleConnection oracle)
+        {
+            // ODP.NET array binding: one round trip for the whole batch. Dapper would execute once per element,
+            // which made auditing a 32-message dispatch batch cost 32 round trips (see docs/benchmarks.md).
+            await using var command = oracle.CreateCommand();
+            command.CommandText = InsertSql;
+            command.BindByName = true;
+            command.ArrayBindCount = entries.Count;
+            command.Transaction = (OracleTransaction?)transaction;
+            command.Parameters.Add(Array("Actor", entries.Select(e => e.Actor)));
+            command.Parameters.Add(Array("Action", entries.Select(e => e.Action)));
+            command.Parameters.Add(Array("Entity", entries.Select(e => e.Entity)));
+            command.Parameters.Add(Array("EntityId", entries.Select(e => e.EntityId)));
+            command.Parameters.Add(Array("Fields", entries.Select(e => e.Fields)));
+            command.Parameters.Add(Array("Purpose", entries.Select(e => e.Purpose)));
+            command.Parameters.Add(Array("TraceId", entries.Select(_ => traceId)));
+            await command.ExecuteNonQueryAsync();
+            return;
+        }
+
+        await connection.ExecuteAsync(InsertSql, entries.Select(e => new
         {
             e.Actor,
             e.Action,
@@ -67,6 +88,9 @@ public sealed class AuditRepository(OracleDb db)
             TraceId = traceId,
         }), transaction);
     }
+
+    private static OracleParameter Array(string name, IEnumerable<string?> values) =>
+        new(name, OracleDbType.Varchar2) { Value = values.Select(v => (object?)v ?? DBNull.Value).ToArray() };
 
     public async Task WriteAsync(AuditEntry entry, CancellationToken ct = default)
     {
