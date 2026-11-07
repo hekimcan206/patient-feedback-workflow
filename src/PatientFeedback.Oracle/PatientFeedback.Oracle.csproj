@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PatientFeedback.Core\PatientFeedback.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Schema and PL/SQL ship inside the assembly so the installer, the tests and the benchmark apply the same scripts. -->
+    <EmbeddedResource Include="..\..\db\oracle\schema\*.sql" LogicalName="PatientFeedback.Oracle.Schema.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PatientFeedback.OracleTests" />
+  </ItemGroup>
+
+</Project>
