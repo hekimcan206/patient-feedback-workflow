@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="Testcontainers.Oracle" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PatientFeedback.Core\PatientFeedback.Core.csproj" />
+    <ProjectReference Include="..\..\src\PatientFeedback.Oracle\PatientFeedback.Oracle.csproj" />
+    <ProjectReference Include="..\..\src\PatientFeedback.Synthetic\PatientFeedback.Synthetic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- One shared database, and retention runs touch every row: test classes run one at a time. -->
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The exact user-creation script docker compose mounts, so least privilege is tested, not assumed. -->
+    <None Include="..\..\deploy\oracle\init\01-users.sh" Link="oracle-init\01-users.sh" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="AwesomeAssertions" />
+  </ItemGroup>
+
+</Project>
