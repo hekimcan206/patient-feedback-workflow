@@ -1,0 +1,4 @@
+name: codeql config
+# Vendored, minified third-party libraries are not our code (see wwwroot/lib/THIRD-PARTY-NOTICES.txt).
+paths-ignore:
+  - src/PatientFeedback.Web/wwwroot/lib
